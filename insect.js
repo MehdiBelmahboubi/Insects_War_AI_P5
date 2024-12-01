@@ -5,49 +5,43 @@ class Insect {
         this.speedX = 2; 
         this.speedY = 2;
         this.isLeader = isLeader;
-        this.maxSpeed = 2;  // Maximum speed
-        this.spacing = 40;  // Distance between insects in snake mode
+        this.maxSpeed = 2; 
+        this.spacing = 40;  
         this.velocity = createVector(this.speedX, this.speedY);
         this.acceleration = createVector(0, 0);
     }
 
     move(insects, index) {
-        if (snakeMode) {  // Activate snake behavior only when snakeMode is true
+        if (snakeMode) {  
             if (this.isLeader) {
-                // The leader follows the mouse
                 let desired = createVector(mouseX - this.x, mouseY - this.y);
                 desired.setMag(this.maxSpeed);
                 let steer = p5.Vector.sub(desired, this.velocity);
-                steer.limit(0.1);  // Smooth steering
+                steer.limit(0.1);  
                 this.acceleration.add(steer);
             } else {
-                // Ensure we are not trying to access an undefined insect (when index is 0)
                 if (index > 0) {
                     let previousVehicle = insects[index - 1];
                     let desired = createVector(previousVehicle.x - this.x, previousVehicle.y - this.y);
 
-                    // Adjust speed depending on the distance
                     if (desired.mag() > this.spacing) {
-                        desired.setMag(this.maxSpeed);  // Speed up if too far away
+                        desired.setMag(this.maxSpeed);  
                     } else {
-                        desired.setMag(this.maxSpeed * 0.5);  // Slow down when close
+                        desired.setMag(this.maxSpeed * 0.5);  
                     }
 
                     let steer = p5.Vector.sub(desired, this.velocity);
-                    steer.limit(0.1);  // Smooth steering
+                    steer.limit(0.1);  
                     this.acceleration.add(steer);
                 }
             }
 
-            // Apply velocity and acceleration
             this.velocity.add(this.acceleration);
             this.x += this.velocity.x;
             this.y += this.velocity.y;
 
-            // Reset acceleration for next frame
             this.acceleration.mult(0);
         } else {
-            // Default movement logic (no snake mode)
             if (this.isLeader || !leaderMode) {
                 this.x += this.speedX;
                 this.y += this.speedY;
@@ -59,17 +53,15 @@ class Insect {
     }
 
     display() {
-        image(insectImg, this.x, this.y, 40, 40);  // Draw the insect's head
+        image(insectImg, this.x, this.y, 40, 40);  
     }
 
-    // Follow a target position (for leader following or in other modes)
     follow(targetX, targetY) {
         let angle = atan2(targetY - this.y, targetX - this.x);
         this.x += cos(angle) * 2; 
         this.y += sin(angle) * 2;
     }
 
-    // Avoid other insects by maintaining separation
     avoidOthers(insects) {
         let separationForceX = 0;
         let separationForceY = 0;
