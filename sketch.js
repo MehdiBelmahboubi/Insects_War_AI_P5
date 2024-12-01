@@ -95,12 +95,15 @@ function mousePressed() {
 function keyPressed() {
     if (key === 'L' || key === 'l') {
         leaderMode = !leaderMode;
+        document.getElementById('currentMode').innerText = leaderMode ? "Current Mode: Leader Mode" : "Current Mode: Default";
     }
     if (key === 'M' || key === 'm') {
         mouseMode = !mouseMode; 
+        document.getElementById('currentMode').innerText = mouseMode ? "Current Mode: Mouse Mode" : "Current Mode: Default";
     }
     if (key === 'I' || key === 'i') {
         let newImposter = new Imposter(random(width), random(height));
         imposters.push(newImposter);
+        document.getElementById('currentMode').innerText = "Imposter Add";
     }
 }
