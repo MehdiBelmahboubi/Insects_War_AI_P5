@@ -7,6 +7,7 @@ let imposter;
 let leaderMode = false; 
 let mouseMode = false;
 let imposterMode = false;
+let snakeMode = false;
 
 function preload() {
     bg = loadImage('./assets/background.png');
@@ -16,12 +17,12 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1919, 919);
+    createCanvas(windowWidth, windowHeight);
 
     imposter= new Imposter(random(width), random(height), true);
     leader= new Insect(random(width), random(height), true);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
         insects.push(new Insect(random(width), random(height), false));
     }
 }
@@ -33,32 +34,13 @@ function draw() {
         obstacle.display();
     }
 
-
-    for (let i = imposters.length - 1; i >= 0; i--) {
-        let imposter = imposters[i];
-
-        if (!imposter.isAlive) {
-            imposters.splice(i, 1); // Remove dead imposters from the array
-            continue;
-        }
-
-        imposter.runToClosestObstacle(obstacles);
-        imposter.display();
-
-        for (let insect of insects) {
-            if (dist(insect.x, insect.y, imposter.x, imposter.y) < 20) {
-                imposter.disappear();
-                break;
-            }
-            insect.follow(imposter.x, imposter.y);
-            insect.avoidOthers(insects);
-            insect.avoidObstacles(obstacles);
-            insect.move();
-            insect.display();
+    if(snakeMode){
+        for (let i = 0; i < insects.length; i++) {
+            insects[i].move(insects, i);
+            insects[i].display();
         }
     }
-
-    if (leaderMode) {
+    else if (leaderMode) {
         leader.move();
         leader.display();
         leader.avoidObstacles(obstacles);
@@ -77,7 +59,8 @@ function draw() {
             insect.avoidObstacles(obstacles);
             insect.display();
         }
-    } else {
+    } 
+    else {
         for (let insect of insects) {
             insect.avoidOthers(insects);
             insect.avoidObstacles(obstacles);
@@ -105,5 +88,9 @@ function keyPressed() {
         let newImposter = new Imposter(random(width), random(height));
         imposters.push(newImposter);
         document.getElementById('currentMode').innerText = "Imposter Add";
+    }
+    if (key === 'S' || key === 's') {
+        snakeMode = !snakeMode;
+        document.getElementById('currentMode').innerText = mouseMode ? "Current Mode: Snake Mode Activated" : "Current Mode: Default";
     }
 }
